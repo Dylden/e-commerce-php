@@ -2,40 +2,39 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 class VendorMachine
 {
-    public $snacks = [
-        [
-            "name" => "Snickers",
-            "price" => 1,
-            "quantity" => 5
-        ],
-        [
-            "name" => "Mars",
-            "price" => 1.5,
-            "quantity" => 5
-        ],
-        [
-            "name" => "Twix",
-            "price" => 2,
-            "quantity" => 5
-        ],
-        [
-            "name" => "Bounty",
-            "price" => 2.5,
-            "quantity" => 5
-        ]
-    ];
-    public $cashAmount = 0;
-    public $isOn = false;
+    public $snacks;
     public $time;
-
+    public $isOn;
+    public $cashAmount;
     public function __construct()
     {
-
+        $this->isOn = false;
+        $this->cashAmount = 0.00;
         $this->time = new DateTime();
-
+        $this->snacks = [
+            [
+                "name" => "Snickers",
+                "price" => 1,
+                "quantity" => 5
+            ],
+            [
+                "name" => "Mars",
+                "price" => 1.5,
+                "quantity" => 5
+            ],
+            [
+                "name" => "Twix",
+                "price" => 2,
+                "quantity" => 5
+            ],
+            [
+                "name" => "Bounty",
+                "price" => 2.5,
+                "quantity" => 5
+            ]
+        ];
     }
 
     //Fonction pour allumer la machine. // Si elle est déjà allumé, l'éteint.
@@ -50,15 +49,11 @@ class VendorMachine
     {
         $currentTime = new DateTime();
 
-        if ($this->isOn === true && $currentTime->format('H') >= 18) {
+        if ($currentTime->format('H') >= 18) {
             $this->isOn = false;
             return "La machine est éteinte";
-
-
         }
-
         throw new Exception('Vous ne pouvez pas éteindre la machine avant 18h !');
-
     }
 
     //SI la machine est allumée, que le snack existe dans la liste :
@@ -78,11 +73,9 @@ class VendorMachine
                     return;
                 } else if ($snack['name'] === $snackName && $snack['quantity'] === 0) {
                     throw new Exception("le {$snack['name']} est en rupture de stock'");
-
                 }
             }
         }
-
     }
 
     //SI la machine est allumée, fait tomber un snack au hasard + augmente le cashAmount
@@ -95,9 +88,8 @@ class VendorMachine
             if ($this->snacks[$randomSnackKey]['quantity'] > 0) {
                 $this->snacks[$randomSnackKey]['quantity']--;
 
-                $randomCashAmount = $randomSnack['price'] + mt_rand(1, 10)/10;
-                $randomCashAmount = round($randomCashAmount, 2);
-                $this->cashAmount += $randomCashAmount;
+                $randomInsideCash = rand(0, $this->cashAmount);
+                $this->cashAmount += $randomInsideCash;
             } else {
                 throw new Exception("le {$randomSnack['name']} est en rupture de stock'");
             }
